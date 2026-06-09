@@ -20,7 +20,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filte
 
 # 1. إعداد مفاتيح الاتصال (التوكن والـ API Key النظيف والفعال)
 TELEGRAM_TOKEN = '8897354719:AAF0srT86hrLhh_yMOK1yQTrRupSdJqD-tM'
-GEMINI_API_KEY = 'AQ.Ab8RN6I_ylbN0A63vnwURXJEV8DltadmZb3v338zMCJKphxxbA'
+GEMINI_API_KEY ='AQ.Ab8RN6L_n-zGQpRcb_cKIr0nBWSpQsjLZC9LftQsxdjpBHD1hA'
 
 # 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
