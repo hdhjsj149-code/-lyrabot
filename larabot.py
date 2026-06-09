@@ -107,7 +107,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     except Exception as e:
         print(f"حدث خطأ في الاتصال بجوجل: {e}")
-        await update.message.reply_text("عذراً، حصلت مشكلة صغيرة في السيرفر، جرب أرسل تاني بعد شوية!")
+        #await update.message.reply_text("عذراً، حصلت مشكلة صغيرة في السيرفر، جرب أرسل تاني بعد شوية!")
 
 # 4. تشغيل وتدوير البوت
 if __name__ == '__main__':
