@@ -105,9 +105,9 @@ if __name__ == '__main__':
     app.run_polling()
 
 import os
+import threading
 from http.server import SimpleHTTPRequestHandler
 from socketserver import TCPServer
-import threading
 
 def run_dummy_server():
     port = int(os.environ.get("PORT", 8080))
