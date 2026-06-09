@@ -17,7 +17,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 
 # 1. إعداد مفاتيح الاتصال (حط التوكن والـ API Key هنا)
-TELEGRAM_TOKEN = '8897354719:AAFLMgQt3HX6oTxhW0BWXqtTZPgRO5YYu7M'
+TELEGRAM_TOKEN = '8897354719:AAF0srT86hrLhh_yMOK1yQTrRupSdJqD-tM'
 GEMINI_API_KEY = 'AQ.Ab8RN6I_ylbN0A63vnwURXJEV8DltadmZb3v338zMCJKphxxbA'
 
 # 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة
