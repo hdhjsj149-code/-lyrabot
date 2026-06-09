@@ -24,8 +24,7 @@ TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 # 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة
-ai_client = genai.Client(api_key=GEMINI_API_KEY)
-
+ai_client = os.environ.get('GEMINI_API_KEY')
 # 3. دالة استقبال ومعالجة الرسائل
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
