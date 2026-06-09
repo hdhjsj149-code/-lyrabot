@@ -19,8 +19,9 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 
 # 1. إعداد مفاتيح الاتصال (التوكن والـ API Key النظيف والفعال)
-TELEGRAM_TOKEN = '8897354719:AAF0srT86hrLhh_yMOK1yQTrRupSdJqD-tM'
-GEMINI_API_KEY ='AQ.Ab8RN6L_n-zGQpRcb_cKIr0nBWSpQsjLZC9LftQsxdjpBHD1hA'
+# 1. إعداد مفاتيح الاتصال بأمان من البيئة السحابية
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 # 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
