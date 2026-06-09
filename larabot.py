@@ -11,12 +11,14 @@ def run_dummy_server():
         httpd.serve_forever()
 
 threading.Thread(target=run_dummy_server, daemon=True).start()
+
 import os
 from google import genai
+from google.genai import types
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 
-# 1. إعداد مفاتيح الاتصال (حط التوكن والـ API Key هنا)
+# 1. إعداد مفاتيح الاتصال (التوكن والـ API Key النظيف والفعال)
 TELEGRAM_TOKEN = '8897354719:AAF0srT86hrLhh_yMOK1yQTrRupSdJqD-tM'
 GEMINI_API_KEY = 'AQ.Ab8RN6I_ylbN0A63vnwURXJEV8DltadmZb3v338zMCJKphxxbA'
 
@@ -25,11 +27,13 @@ ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # 3. دالة استقبال ومعالجة الرسائل
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text:
+        return
+        
     # تجهيز النص المكتوب وتنظيفه من المسافات الزايدة
     user_text = update.message.text.strip()
     
     # === [أولاً: لستة الردود التلقائية الثابتة] ===
-    # تحت عندك الردود الأساسية + 35 فراغ جاهز للتعديل بيدك
     auto_replies = {
         # الردود الأساسية
         'السلام عليكم': 'وعليكم السلام ورحمة الله وبركاته، منور يا غالي! 🌹',
@@ -38,7 +42,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'الصنعك منو': 'صنعني ومبرمجني الأساسي هو الفخم أحمد، ! 😉💪',
         'منور': 'النور نورك والله يا حبيبنا! 🌟',
         
-        # ⬇️ الـ 35 فراغ الجاهزة (عدل الكلمة والرد الجواها براحتك) ⬇️
+        # ⬇️ الـ 35 فراغ الجاهزة ⬇️
         'وين انت': 'لو مهتم كان عرفته 😎',
         'وين مختفي': 'لو مهتم كان عرفته 🙄',
         'وين مختفيه': 'لو مهتمه كان عرفتي 🙃',
@@ -76,31 +80,32 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'الكلمة 35': 'الرد هنا 35',
     }
     
-    # الفحص: لو الكلمة في اللستة، رد طوالي واقفل الخط (الفرملة)
+    # الفحص: لو الكلمة في اللستة، رد طوالي واقفل الخط
     if user_text in auto_replies:
         await update.message.reply_text(auto_replies[user_text])
         return
 
-    # === [ثانياً: تحويل الرسالة للذكاء الاصطناعي لو ما لقينالها رد ثابت] ===
+    # === [ثانياً: تحويل الرسالة للذكاء الاصطناعي] ===
     try:
         response = ai_client.models.generate_content(
             model='gemini-2.5-flash',
             contents=user_text,
-            # التوجيهات الحاكمة (غسيل المخ) عشان يفضل متذكر هويته وصانعه أحمد بأي صيغة سؤال
-            config={
-                'system_instruction': (
+            config=types.GenerateContentConfig(
+                system_instruction=(
                     'أنت بوت تليجرام ذكي وسريع اسمك Lyra. صانعك ومطورك ومبرمجك الأساسي '
                     'هو المبرمج أحمد. إذا سألك أي شخص من صنعك، من طورك، أو من مبرمجك، '
                     'أخبره بفخر وثقة أن أحمد هو صانعك ومطورك، ولا تذكر جوجل إلا إذا سُئلت '
-                    'عن التقنية المشغلة لذكائك فقط. رد دائماً بلهجة ودودة ومحترمة.'
+                    'عن التقنية المشغلة لذكائك فقط. رد دائماً بلهجة ودودة ومحترمة ومختصرة بالعامية السودانية.'
                 )
-            }
+            )
         )
         # إرسال رد الذكاء الاصطناعي للمستخدم
-        await update.message.reply_text(response.text)
+        if response.text:
+            await update.message.reply_text(response.text)
+        else:
+            await update.message.reply_text("عذراً، لم أستطع فهم الرسالة، جرب صياغتها بطريقة أخرى.")
         
     except Exception as e:
-        # لو حصلت مشكلة في الشبكة، يطبع الخطأ في النظام وما يعلق في التليجرام
         print(f"حدث خطأ في الاتصال بجوجل: {e}")
         await update.message.reply_text("عذراً، حصلت مشكلة صغيرة في السيرفر، جرب أرسل تاني بعد شوية!")
 
