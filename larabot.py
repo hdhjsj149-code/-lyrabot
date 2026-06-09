@@ -18,13 +18,13 @@ from google.genai import types
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 
-# 1. إعداد مفاتيح الاتصال (التوكن والـ API Key النظيف والفعال)
-# 1. إعداد مفاتيح الاتصال بأمان من البيئة السحابية
+# 1. إعداد مفاتيح الاتصال بأمان من البيئة السحابية (مخفية ومؤمنة)
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
-# 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة
-ai_client = os.environ.get('GEMINI_API_KEY')
+# 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة بالطريقة الصحيحة ✅
+ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
 # 3. دالة استقبال ومعالجة الرسائل
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
@@ -107,7 +107,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     except Exception as e:
         print(f"حدث خطأ في الاتصال بجوجل: {e}")
-        #await update.message.reply_text("عذراً، حصلت مشكلة صغيرة في السيرفر، جرب أرسل تاني بعد شوية!")
+        #await update.message.reply_text("عذراً، حصلت مشكلة في الاتصال بذكاء جيميناي، جرب تاني!")
 
 # 4. تشغيل وتدوير البوت
 if __name__ == '__main__':
