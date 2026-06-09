@@ -1,4 +1,17 @@
 import os
+import threading
+from http.server import SimpleHTTPRequestHandler
+from socketserver import TCPServer
+
+def run_dummy_server():
+    port = int(os.environ.get("PORT", 8080))
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, format, *args): return
+    with TCPServer(("", port), QuietHandler) as httpd:
+        httpd.serve_forever()
+
+threading.Thread(target=run_dummy_server, daemon=True).start()
+import os
 from google import genai
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
@@ -103,17 +116,3 @@ if __name__ == '__main__':
     
     # بدء الاستماع للرسايل (Polling)
     app.run_polling()
-
-import os
-import threading
-from http.server import SimpleHTTPRequestHandler
-from socketserver import TCPServer
-
-def run_dummy_server():
-    port = int(os.environ.get("PORT", 8080))
-    class QuietHandler(SimpleHTTPRequestHandler):
-        def log_message(self, format, *args): return
-    with TCPServer(("", port), QuietHandler) as httpd:
-        httpd.serve_forever()
-
-threading.Thread(target=run_dummy_server, daemon=True).start()
