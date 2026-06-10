@@ -20,7 +20,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filte
 
 # 1. إعداد مفاتيح الاتصال بأمان من البيئة السحابية (مخفية ومؤمنة)
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+GEMINI_API_KEY ='AQ.Ab8RN6JDtV2kPVt8EHjMhC0q6BOFMx_OnAt9Mo49yZ9_RxUeTA'
 
 # 2. تشغيل عميل جوجل جيميناي بالمكتبة الجديدة بالطريقة الصحيحة ✅
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
