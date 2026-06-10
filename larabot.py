@@ -86,7 +86,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # === [ثانياً: تحويل الرسالة لذكاء Groq الخارق وسريع الطلقات] ===
     try:
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-specdec",  # نموذج لاما الحديث، سريع وذكي وممتاز في اللهجة
+            model="llama-3.3-70b-versatile",  # نموذج لاما الحديث، سريع وذكي وممتاز في اللهجة
             messages=[
                 {
                     "role": "system",
