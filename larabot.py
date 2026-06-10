@@ -1,111 +1,112 @@
+import os
 import threading
 from http.server import SimpleHTTPRequestHandler
 from socketserver import TCPServer
 
 def run_dummy_server():
-    port = 8080
-
+    port = int(os.environ.get("PORT", 8080))
     class QuietHandler(SimpleHTTPRequestHandler):
-        def log_message(self, format, *args):
-            return
-
+        def log_message(self, format, *args): return
     with TCPServer(("", port), QuietHandler) as httpd:
         httpd.serve_forever()
 
 threading.Thread(target=run_dummy_server, daemon=True).start()
 
-import google.generativeai as genai
+import os
+from google import genai
+from google.genai import types
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 
-# =========================
-# بيانات البوت
-# =========================
-
+# === [حط مفاتيحك مباشرة هنا بين علامات التنصيص] ===
 TELEGRAM_TOKEN = "8897354719:AAFZHnJu5L0ghCTZbjER9bMzlyWJymZB8HE"
-GEMINI_API_KEY = "AQ.Ab8RN6JDtV2kPVt8EHjMhC0q6BOFMx_OnAt9Mo49yZ9_RxUeTA"
+GEMINI_API_KEY = "AQ.Ab8RN6JDtV2kPVt8EHjMhC0q6BOFMx_OnAt9Mo49yZ9_RxUeTA" # هنا حط مفتاح جيميناي الحقيقي بتاعك
 
-genai.configure(api_key=GEMINI_API_KEY)
+# تشغيل عميل جيميناي بالمفتاح المباشر
+ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel("gemini-2.5-flash")
-
-# =========================
-# استقبال الرسائل
-# =========================
-
+# دالة استقبال ومعالجة الرسائل
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
-
+        
     user_text = update.message.text.strip()
-
+    
+    # === [أولاً: لستة الردود التلقائية الثابتة والـ 35 خانة الفاضية] ===
     auto_replies = {
         'السلام عليكم': 'وعليكم السلام ورحمة الله وبركاته، منور يا غالي! 🌹',
         'الاخبار شنو': 'كلشي تمام التمام والامور طيبة، إنت كيف أمورك؟ ✨',
         'الطورك منو': 'طورني وصنعني المبرمج أحمد! 🤖🔥',
-        'الصنعك منو': 'صنعني ومبرمجني الأساسي هو الفخم أحمد 😉💪',
+        'الصنعك منو': 'صنعني ومبرمجني الأساسي هو الفخم أحمد، ! 😉💪',
         'منور': 'النور نورك والله يا حبيبنا! 🌟',
         'وين انت': 'لو مهتم كان عرفته 😎',
         'وين مختفي': 'لو مهتم كان عرفته 🙄',
         'وين مختفيه': 'لو مهتمه كان عرفتي 🙃',
-        'صباح الخير': 'صبـ(⛅)ـُ(آٍلـٍـً(🌺)ـٍورٍدً)ـ(⛅)ـٍآٍآٍحً',
-        'مساء الخير': 'مۡسَـ(🍀)ـاء الۣخـ(🌸)ـيۡݛ',
+        'صباح الخير': 'صبـ(⛅)ـُ(آٍلـٍـً(🌺)ـٍورٍدً)ـ(⛅)ـٍآٍآٍحً ',
+        'مساء الخير': 'مۡسَـ(🍀)ـاء الۣخـ(🌸)ـيۡݛ ',
         'الحاصل شنو': 'Nothing special 😔',
         'كيف الكلام ده': 'عديل 😎',
-        'تابعه لي منو انتي': 'احمد فارس 🥺',
-        'الخبر شنو': 'الحمدلله انت كيف؟',
+        'تابعه لي منو انتي ': 'احمد فارس 🥺',
+        'الخبر شنو': 'الحمدلله انت كيف؟ ',
         'احسنت بارك الله فيك': 'طيب الله انفاسك 🤍',
         'فطوم': 'شيختنا 🤍🌹',
-        'الجديد شنو': 'طلتك يا غالي',
-        'الامور شنو': 'الحمدلله',
-        'الحمدلله': 'دام حمدك',
-        'يديك العافيه': 'الله يعافيك يارب 🤲',
+        'الجديد شنو': 'طلتك يا غالي ',
+        'الامور شنو': 'الحمدلله ',
+        'الحمدلله ': 'دام حمدك',
+        'يديك العافيه ': 'الله يعافيك يارب 🤲',
         'شكرا': 'عفواً 🌹',
         'مشتاقين': '🥺🥺',
+        
+        # ⬇️ الـ 35 خانة الفاضية جاهزة لـ تعديلك ⬇️
+        'الكلمة 18': 'الرد هنا 18',
+        'الكلمة 19': 'الرد هنا 19',
+        'الكلمة 20': 'الرد هنا 20',
+        'الكلمة 21': 'الرد هنا 21',
+        'الكلمة 22': 'الرد هنا 22',
+        'الكلمة 23': 'الرد هنا 23',
+        'الكلمة 24': 'الرد هنا 24',
+        'الكلمة 25': 'الرد هنا 25',
+        'الكلمة 26': 'الرد هنا 26',
+        'الكلمة 27': 'الرد هنا 27',
+        'الكلمة 28': 'الرد هنا 28',
+        'الكلمة 29': 'الرد هنا 29',
+        'الكلمة 30': 'الرد هنا 30',
+        'الكلمة 31': 'الرد هنا 31',
+        'الكلمة 32': 'الرد هنا 32',
+        'الكلمة 33': 'الرد هنا 33',
+        'الكلمة 34': 'الرد هنا 34',
+        'الكلمة 35': 'الرد هنا 35',
     }
-
+    
     if user_text in auto_replies:
         await update.message.reply_text(auto_replies[user_text])
         return
 
+    # === [ثانياً: تحويل الرسالة للذكاء الاصطناعي جيميناي] ===
     try:
-        prompt = f"""
-أنت بوت تليجرام ذكي اسمك Lyra.
-
-صانعك ومطورك ومبرمجك الأساسي هو أحمد.
-إذا سألك أي شخص من صنعك أو من طورك أو من برمجك فأخبره أن أحمد هو صانعك ومطورك.
-
-تحدث دائماً بلهجة سودانية ودودة ومختصرة.
-
-رسالة المستخدم:
-{user_text}
-"""
-
-        response = model.generate_content(prompt)
-
+        response = ai_client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=user_text,
+            config=types.GenerateContentConfig(
+                system_instruction=(
+                    'أنت بوت تليجرام ذكي وسريع اسمك Lyra. صانعك ومطورك ومبرمجك الأساسي '
+                    'هو المبرمج أحمد. إذا سألك أي شخص من صنعك، من طورك، أو من مبرمجك، '
+                    'أخبره بفخر وثقة أن أحمد هو صانعك ومطورك. رد دائماً بلهجة ودودة ومحترمة ومختصرة بالعامية السودانية.'
+                )
+            )
+        )
         if response.text:
             await update.message.reply_text(response.text)
         else:
-            await update.message.reply_text("ما قدرت أفهم الرسالة، جرب تكتبها بطريقة تانية.")
-
+            await update.message.reply_text("عذراً، لم أستطع فهم الرسالة، جرب صياغتها بطريقة أخرى.")
+        
     except Exception as e:
-        print(f"Gemini Error: {e}")
-        await update.message.reply_text("حصلت مشكلة في الاتصال بالذكاء الاصطناعي، جرب بعد شوية.")
+        print(f"حدث خطأ في الاتصال بجوجل: {e}")
+        await update.message.reply_text("عذراً، السيرفر مضغوط ثواني، جرب أرسل تاني!")
 
-# =========================
 # تشغيل البوت
-# =========================
-
-if __name__ == "__main__":
-    print("Bot Started Successfully 🚀")
-
+if __name__ == '__main__':
+    print("البوت بدأ الشغل بنجاح على جيميناي.. 🚀")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
-
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            handle_message
-        )
-    )
-
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.run_polling()
